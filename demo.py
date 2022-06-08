@@ -1,7 +1,6 @@
 from __future__ import print_function
-
-
 from src.misc.config import cfg, cfg_from_file
+from PIL import Image
 from src.dataset import TextDataset
 from src.trainer import condGANTrainer as trainer
 
@@ -9,7 +8,7 @@ import time
 import random
 import pprint
 import numpy as np
-
+import config
 import torch
 import torchvision.transforms as transforms
 
@@ -49,7 +48,7 @@ def gen_example(wordtoix, algo, text):
         c_len = len(cap)
         cap_array[i, :c_len] = cap
     name = "output"
-    key = name[(name.rfind("/") + 1) :]
+    key = name[(name.rfind("/") + 1):]
     data_dic[key] = [cap_array, cap_lens, sorted_indices]
     algo.gen_example(data_dic)
 
@@ -62,16 +61,16 @@ def center_element(type, text=None, img_path=None):
     Function to center a streamlit element (text, image, etc)
     """
     if type == "image":
-        col1, col2, col3 = st.beta_columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 2, 1])
 
     elif type == "text" or type == "heading":
-        col1, col2, col3 = st.beta_columns([1, 6, 1])
+        col1, col2, col3 = st.columns([1, 6, 1])
 
     elif type == "subheading":
-        col1, col2, col3 = st.beta_columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 2, 1])
 
     elif type == "title":
-        col1, col2, col3 = st.beta_columns([1, 8, 1])
+        col1, col2, col3 = st.columns([1, 8, 1])
 
     with col1:
         st.write("")
@@ -99,6 +98,7 @@ def center_element(type, text=None, img_path=None):
         st.write("")
 
 
+
 def demo_gan():
 
     cfg_from_file("eval_bird.yml")
@@ -120,7 +120,7 @@ def demo_gan():
             transforms.RandomHorizontalFlip(),
         ]
     )
-    st.cache(func=TextDataset, persist=True,ttl=10000)
+    st.cache(func=TextDataset, persist=True, ttl=10000)
     dataset = TextDataset(
         cfg.DATA_DIR, split_dir, base_size=cfg.TREE.BASE_SIZE, transform=image_transform
     )
@@ -135,58 +135,54 @@ def demo_gan():
 
     # Define models and go to train/evaluate
     st.cache(
-        func=trainer, persist=True, suppress_st_warning=True,ttl=10000
+        func=trainer, persist=True, suppress_st_warning=True, ttl=10000
     )
 
     algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
-
-    st.title("Text To Image Synthesis using AttnGAN")
-
+    title_container = st.container()
+    col1, mid, col2 = st.columns([1, 1, 20])
+    image = Image.open(r'C:\imageproject\Text-to-image\bird.jpg')
+    with title_container:
+        with col1:
+            st.image(image, width=64)
+        with col2:
+            st.markdown('<b><p style="font-family:Serif;color:Blue;font-size:35px;">Search Birdie</p></b>',
+                        unsafe_allow_html=True)
+    #title = '<b><p style="font-family:Serif;color:Blue;font-size:35px;">BirdIt</p></b> '
+    #st.markdown(title, unsafe_allow_html=True)
     st.markdown("---")
-    st.markdown("Creator: [Atharva Ingle](https://github.com/Gladiator07)")
-    st.markdown(
-        "Code: [GitHub Repository](https://github.com/Gladiator07/Text-to-image-synthesis-with-AttnGAN)"
-    )
-    st.markdown("---")
 
-    st.subheader("Enter the description of the bird in the text box you like !!!")
-    st.write(
-        "**Example**: A yellow bird with red crown, black short beak and long tail"
-    )
-    st.markdown("**PS**: The synthesized birds might not even exist on earth 😬 😮 😱")
+    subtitle = '<b><p style="font-family:Serif;color:red;font-size:25px;">Describe the Bird:</p></b> '
+    st.markdown(subtitle, unsafe_allow_html=True)
     st.markdown("#")
 
-    user_input = st.text_input("Write the bird description below")
+    user_input = st.text_input("Description:")
     st.markdown("---")
 
     if user_input:
-
         start_t = time.time()
 
         # generate images for customized captions
         gen_example(dataset.wordtoix, algo, text=user_input)
         end_t = time.time()
         print("Total time for training:", end_t - start_t)
-        st.write(f"**Your input**: {user_input}")
-        center_element(type="subheading", text="AttnGAN synthesized bird")
+        #st.write(f"**Your input**: {user_input}")
+        center_element(type="subheading", text="bird")
         st.text("")
         center_element(
             type="image", img_path="models/bird_AttnGAN2/output/0_s_0_g2.png"
         )
 
-        center_element(type="subheading", text="The attention given for each word")
+        text='<b><p style="font-family:Serif;color:red;font-size:25px;">Visualize the attention given to each word::</p></b> '
+        st.markdown(text, unsafe_allow_html=True)
+        #st.markdown(type="subheading", text="Visualize the attention given to each word:")
         st.image("models/bird_AttnGAN2/output/0_s_0_a1.png")
-
         st.markdown("---")
-        with st.beta_expander("Click to see the first stage images"):
+        with st.expander("Click to see the first stage images"):
             st.write("First stage image")
             st.image("models/bird_AttnGAN2/output/0_s_0_g1.png")
-            st.write("First stage attention")
-            st.image("models/bird_AttnGAN2/output/0_s_0_a0.png")
-
 
 def attngan_explained():
-
     # center_element(type="heading", text="AttnGAN: Fine-Grained Text To Image Generation with Attentional Generative Adverserial Networks")
     st.header(
         "**AttnGAN**: Fine-Grained Text To Image Generation with Attentional Generative Adverserial Networks"
