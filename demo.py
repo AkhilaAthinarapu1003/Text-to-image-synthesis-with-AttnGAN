@@ -174,11 +174,12 @@ def demo_gan():
         center_element(
             type="image", img_path="models/bird_AttnGAN2/output/0_s_0_g2.png"
         )
-         st.markdown("---")
+        
         image=Image.open("models/bird_AttnGAN2/output/0_s_0_g2.png");
         r = image.transpose(Image.FLIP_LEFT_RIGHT)
         h = image.transpose(Image.FLIP_TOP_BOTTOM)
         col1, mid, col2 = st.beta_columns([1, 1, 20])
+        st.markdown("---")
         with col1:
             if st.button("right"):
                 st.image(r,width=250)
