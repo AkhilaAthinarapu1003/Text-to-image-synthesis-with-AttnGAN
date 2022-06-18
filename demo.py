@@ -61,16 +61,16 @@ def center_element(type, text=None, img_path=None):
     Function to center a streamlit element (text, image, etc)
     """
     if type == "image":
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.beta_columns([1, 2, 1])
 
     elif type == "text" or type == "heading":
-        col1, col2, col3 = st.columns([1, 6, 1])
+        col1, col2, col3 = st.beta_columns([1, 6, 1])
 
     elif type == "subheading":
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.beta_columns([1, 2, 1])
 
     elif type == "title":
-        col1, col2, col3 = st.columns([1, 8, 1])
+        col1, col2, col3 = st.beta_columns([1, 8, 1])
 
     with col1:
         st.write("")
@@ -177,7 +177,7 @@ def demo_gan():
         image=Image.open("models/bird_AttnGAN2/output/0_s_0_g2.png");
         r = image.transpose(Image.FLIP_LEFT_RIGHT)
         h = image.transpose(Image.FLIP_TOP_BOTTOM)
-        col1, mid, col2 = st.columns([1, 1, 20])
+        col1, mid, col2 = st.beta_columns([1, 1, 20])
         with col1:
             if st.button("right"):
                 st.image(r,width=250)
