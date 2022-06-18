@@ -141,7 +141,7 @@ def demo_gan():
     algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
     title_container = st.beta_container()
     col1, mid, col2 = st.beta_columns([1, 1, 20])
-    image = Image.open(r'C:\imageproject\Text-to-image\bird.jpg')
+    image = Image.open(r'bird.jpg')
     with title_container:
         with col1:
             st.image(image, width=64)
