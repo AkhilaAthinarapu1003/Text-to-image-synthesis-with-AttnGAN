@@ -190,7 +190,7 @@ def demo_gan():
         #st.image("models/bird_AttnGAN2/output/0_s_0_a0.png")
         st.image("models/bird_AttnGAN2/output/0_s_0_a1.png")
         st.markdown("---")
-        with st.expander("Click to see the images in each stage"):
+        with st.beta_expander("Click to see the images in each stage"):
             st.write("First stage image")
             st.image("models/bird_AttnGAN2/output/0_s_0_g0.png")
             st.write("second stage image")
